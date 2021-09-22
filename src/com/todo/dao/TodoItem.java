@@ -1,5 +1,6 @@
 package com.todo.dao;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TodoItem {
@@ -36,5 +37,11 @@ public class TodoItem {
 
     public void setCurrent_date(Date current_date) {
         this.current_date = current_date;
+    }
+    
+    public String toSaveString() {
+    	SimpleDateFormat transFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		String now = transFormat.format(current_date);
+    	return title + "##" + desc + "##" + now + "\n";
     }
 }

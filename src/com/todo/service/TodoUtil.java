@@ -1,7 +1,11 @@
 package com.todo.service;
 
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.*;
-
 import com.todo.dao.TodoItem;
 import com.todo.dao.TodoList;
 
@@ -85,7 +89,27 @@ public class TodoUtil {
 	public static void listAll(TodoList l) {
 		System.out.println("[전체 목록을 출력합니다]");
 		for (TodoItem item : l.getList()) {
-			System.out.println("제목: " + item.getTitle() + "  내용:  " + item.getDesc());
+			
+			SimpleDateFormat transFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			String now = transFormat.format(item.getCurrent_date());
+			System.out.println("제목: " + item.getTitle() + "  내용:  " + item.getDesc() + " - " + now);
 		}
 	}
+	
+	public static void saveList(TodoList l, String filename) {
+		try {
+			Writer w = new FileWriter("output2.txt");
+			w.write(l.toString());
+			w.close();
+			System.out.println("저장 완료!");
+		} catch(FileNotFoundException e) {
+			e.printStackTrace();
+		} catch(IOException e) {
+			e.printStackTrace();
+		}
+		
+		
+	}
+	
+	
 }

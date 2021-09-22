@@ -12,6 +12,8 @@ public class Menu {
         System.out.println("ls_name_asc <- 목록을 제목순으로 정렬");
         System.out.println("ls_name_desc <- 목록을 제목역순으로 정렬");
         System.out.println("ls_date <- 목록을 날짜순으로 정렬");
+        System.out.println("saveList <- 목록을 날짜순으로 정렬");
+
         System.out.println("exit <- 프로그램 종료");
     }
     public static void prompt()

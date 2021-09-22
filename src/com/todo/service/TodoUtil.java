@@ -70,13 +70,14 @@ public class TodoUtil {
 		}
 
 		System.out.print("새로운 제목을 입력해주세요 : ");
+		
 		String new_title = sc.next().trim();
 		if (l.isDuplicate(new_title)) {
-			System.out.println("존재하지 않는 제목입니다.");
+			System.out.println("중복되는 제목이 존재합니다.");
 			return;
 		}
 		
-		System.out.println("중복되는 제목이 존재합니다.");
+		System.out.println("새로운 내용을 입력해주세요 : ");
 		String new_description = sc.next().trim();
 		for (TodoItem item : l.getList()) {
 			if (item.getTitle().equals(title)) {
@@ -142,8 +143,5 @@ public class TodoUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
-	
-	
 }

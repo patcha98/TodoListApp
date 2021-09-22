@@ -41,6 +41,10 @@ public class TodoMain {
 			case "save":
 				TodoUtil.saveList(l, "todolist.txt");
 				break;
+				
+			case "load":
+				TodoUtil.loadList(l, "todolist.txt");
+				break;
 
 			case "ls_name_asc":
 				l.sortByName();

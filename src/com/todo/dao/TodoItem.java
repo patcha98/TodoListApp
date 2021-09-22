@@ -15,6 +15,12 @@ public class TodoItem {
         this.current_date=new Date();
     }
     
+    public void TodoSavedItem(String title, String desc, Date current_date){
+        this.title=title;
+        this.desc=desc;
+        this.current_date=current_date;
+    }
+    
     public String getTitle() {
         return title;
     }

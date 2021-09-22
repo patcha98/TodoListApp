@@ -1,9 +1,12 @@
 package com.todo.service;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import com.todo.dao.TodoItem;
@@ -97,9 +100,12 @@ public class TodoUtil {
 	}
 	
 	public static void saveList(TodoList l, String filename) {
+		System.out.println("[전체 목록을 저장합니다]");
 		try {
-			Writer w = new FileWriter("output2.txt");
-			w.write(l.toString());
+			Writer w = new FileWriter(filename);
+			for (TodoItem item : l.getList()) {
+				w.write(item.toSaveString());
+			}
 			w.close();
 			System.out.println("저장 완료!");
 		} catch(FileNotFoundException e) {
@@ -107,7 +113,35 @@ public class TodoUtil {
 		} catch(IOException e) {
 			e.printStackTrace();
 		}
-		
+	}
+	
+	public static void loadList(TodoList l, String filename) {
+		System.out.println("[파일 내용을 불러옵니다]");
+		try {
+			BufferedReader br = new BufferedReader(new FileReader("todolist.txt"));
+			String oneline;
+			while((oneline = br.readLine()) != null) {
+				StringTokenizer st = new StringTokenizer(oneline, "##");
+				String title = st.nextToken();
+			    String desc = st.nextToken();
+			    String from = st.nextToken();
+			    SimpleDateFormat fm = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+			    Date current_date = fm.parse(from);
+			    
+				TodoItem t = new TodoItem(title, desc);
+				t.setCurrent_date(current_date);
+				l.addItem(t);
+				
+			}
+			System.out.println("파일의 내용이 항목에 추가되었습니다.");
+		}catch(FileNotFoundException e) {
+			e.printStackTrace();
+		} catch(IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 	}
 	

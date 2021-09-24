@@ -37,8 +37,6 @@ public class TodoList {
 	}
 
 	public void listAll() {
-		System.out.println("\n"
-				+ "inside list_All method\n");
 		for (TodoItem myitem : list) {
 			SimpleDateFormat transFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 			String now = transFormat.format(myitem.getCurrent_date());
@@ -53,6 +51,7 @@ public class TodoList {
 	public void sortByDate() {
 		Collections.sort(list, new TodoSortByDate());
 	}
+
 
 	public int indexOf(TodoItem t) {
 		return list.indexOf(t);

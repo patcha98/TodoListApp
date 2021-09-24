@@ -64,6 +64,13 @@ public class TodoMain {
 				System.out.println("날짜순으로 정렬하였습니다.");
 				isList = true;
 				break;
+				
+			case "ls_date_desc":
+				l.sortByDate();
+				l.reverseList();
+				System.out.println("날짜역순으로 정렬하였습니다.");
+				isList = true;
+				break;
 			
 			case "search":
 				TodoUtil.search(l);

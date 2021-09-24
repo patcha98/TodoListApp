@@ -42,7 +42,7 @@ public class TodoList {
 		for (TodoItem myitem : list) {
 			SimpleDateFormat transFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 			String now = transFormat.format(myitem.getCurrent_date());
-			System.out.println("제목: " + myitem.getTitle() + "    " + "내용 : " + myitem.getDesc() + " - " + now);
+			System.out.println("[" + myitem.getCategory() + "] " + "제목: " + myitem.getTitle() + " - " + "내용 : " + myitem.getDesc() + " - " + "마감날짜 : " + myitem.getDue_date() + " - " + "생성날짜 : " + now);
 		}
 	}
 	
@@ -57,6 +57,7 @@ public class TodoList {
 	public int indexOf(TodoItem t) {
 		return list.indexOf(t);
 	}
+	
 
 	public Boolean isDuplicate(String title) {
 		for (TodoItem item : list) {

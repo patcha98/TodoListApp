@@ -64,6 +64,14 @@ public class TodoMain {
 				System.out.println("날짜순으로 정렬하였습니다.");
 				isList = true;
 				break;
+			
+			case "search":
+				TodoUtil.search(l);
+				break;
+				
+			case "search_category":
+				TodoUtil.search_category(l);
+				break;
 				
 			case "help":
 				Menu.displaymenu();

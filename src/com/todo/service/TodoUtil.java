@@ -16,7 +16,7 @@ public class TodoUtil {
 	
 	public static void createItem(TodoList list) {
 		
-		String title, desc;
+		String title, desc, category, due_date;
 		Scanner sc = new Scanner(System.in);
 		
 		System.out.print("\n"
@@ -28,27 +28,31 @@ public class TodoUtil {
 			System.out.printf("중복된 제목이 존재합니다.");
 			return;
 		}
+		System.out.print("카테고리을 입력해주세요 : ");
+		category = sc.next();
 		
 		System.out.print("내용을 입력해주세요 : ");
 		desc = sc.next();
 		
-		TodoItem t = new TodoItem(title, desc);
+		System.out.print("마감 날짜을 입력해주세요 (ex:2021/09/30) : ");
+		due_date = sc.next();
+		
+		TodoItem t = new TodoItem(title, desc, category, due_date);
 		list.addItem(t);
 		System.out.println("항목이 추가되었습니다.");
 	}
 
 	public static void deleteItem(TodoList l) {
-		
+		int i = 0;
 		Scanner sc = new Scanner(System.in);
 		System.out.print("\n"
 				+ "[항목을 삭제합니다]\n"
-				+ "삭제할 항목의 제목을 입력해주세요 : ");
-		String title = sc.next();
-		
-		
-		
+				+ "삭제할 항목의 번호를 입력해주세요 : ");
+		int index = sc.nextInt();
+
 		for (TodoItem item : l.getList()) {
-			if (title.equals(item.getTitle())) {
+			i ++;
+			if (i == index) {
 				l.deleteItem(item);
 				System.out.println("항목이 삭제되었습니다.");
 				break;
@@ -58,46 +62,58 @@ public class TodoUtil {
 
 
 	public static void updateItem(TodoList l) {
-		
+		int i = 0;
 		Scanner sc = new Scanner(System.in);
-		
 		System.out.print("\n"
 				+ "[항목을 수정합니다]\n"
-				+ "수정할 항목의 제목을 입력해주세요 : ");
-		String title = sc.next().trim();
-		if (!l.isDuplicate(title)) {
-			System.out.println("입력한 제목이 존재하지 않습니다.");
-			return;
-		}
-
-		System.out.print("새로운 제목을 입력해주세요 : ");
+				+ "수정할 항목의 번호를 입력해주세요 : ");
+		int index = sc.nextInt();
 		
-		String new_title = sc.next().trim();
-		if (l.isDuplicate(new_title)) {
-			System.out.println("중복되는 제목이 존재합니다.");
-			return;
-		}
-		
-		System.out.println("새로운 내용을 입력해주세요 : ");
-		String new_description = sc.next().trim();
 		for (TodoItem item : l.getList()) {
-			if (item.getTitle().equals(title)) {
-				l.deleteItem(item);
-				TodoItem t = new TodoItem(new_title, new_description);
-				l.addItem(t);
-				System.out.println("수정되었습니다.");
-			}
-		}
+			i ++;
+			if (i == index) {
+				
+				System.out.print("새로운 카테고리를 입력해주세요 : ");
+				String new_category = sc.next().trim();
 
+				System.out.print("새로운 제목을 입력해주세요 : ");
+				String new_title = sc.next().trim();
+					if (l.isDuplicate(new_title)) {
+						System.out.println("중복되는 제목이 존재합니다.");
+						return;
+				}
+				
+				System.out.println("새로운 내용을 입력해주세요 : ");
+				String new_description = sc.next().trim();
+				
+				System.out.print("새로운 마감날짜를 입력해주세요 (ex:2021/09/30) : ");
+				String new_due_date = sc.next().trim();
+
+				item.setTitle(new_title);
+				item.setDesc(new_description);
+				item.setCategory(new_category);
+				item.setDue_date(new_due_date);
+
+				break;
+			}
+
+				
+		}
 	}
+	
 
 	public static void listAll(TodoList l) {
-		System.out.println("[전체 목록을 출력합니다]");
+		int i = 0;
+		int count = 0;
 		for (TodoItem item : l.getList()) {
-			
+			i ++;
+		}
+		System.out.println("[전체 목록을 출력합니다]" + "총 " + i + "개");
+		for (TodoItem item : l.getList()) {
+			count ++;
 			SimpleDateFormat transFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 			String now = transFormat.format(item.getCurrent_date());
-			System.out.println("제목: " + item.getTitle() + "  내용:  " + item.getDesc() + " - " + now);
+			System.out.println(count + ". [" + item.getCategory() + "] " + "제목: " + item.getTitle() + " - " + "내용 : " + item.getDesc() + " - " + "마감날짜 : " + item.getDue_date() + " - " + "생성날짜 : " + now);
 		}
 	}
 	
@@ -124,13 +140,15 @@ public class TodoUtil {
 			String oneline;
 			while((oneline = br.readLine()) != null) {
 				StringTokenizer st = new StringTokenizer(oneline, "##");
+				String category = st.nextToken();
 				String title = st.nextToken();
 			    String desc = st.nextToken();
+			    String due_date = st.nextToken();
 			    String from = st.nextToken();
 			    SimpleDateFormat fm = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 			    Date current_date = fm.parse(from);
 			    
-				TodoItem t = new TodoItem(title, desc);
+				TodoItem t = new TodoItem(title, desc, category, due_date);
 				t.setCurrent_date(current_date);
 				l.addItem(t);
 				
@@ -144,5 +162,44 @@ public class TodoUtil {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public static void search(TodoList l) {
+		int count = 0;
+		Scanner sc = new Scanner(System.in);
+		System.out.print("\n"
+				+ "[키워드로 제목 또는 내용을 검색합니다.]\n"
+				+ "검색할 키워드를 입력해주세요 : ");
+		String search = sc.next();
+
+		for (TodoItem item : l.getList()) {
+			
+			if (item.getTitle().contains(search) || item.getDesc().contains(search)) {
+				count ++;
+				SimpleDateFormat transFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				String now = transFormat.format(item.getCurrent_date());
+				System.out.println(count + ". [" + item.getCategory() + "] " + "제목: " + item.getTitle() + " - " + "내용 : " + item.getDesc() + " - " + "마감날짜 : " + item.getDue_date() + " - " + "생성날짜 : " + now);
+			}
+		}
+		System.out.println("총 " + count + " 개의 결과가 존재합니다.");
+	}
+	
+	public static void search_category(TodoList l) {
+		int count = 0;
+		Scanner sc = new Scanner(System.in);
+		System.out.print("\n"
+				+ "[키워드로 카테고리를 검색합니다.]\n"
+				+ "검색할 키워드를 입력해주세요 : ");
+		String search = sc.next();
+
+		for (TodoItem item : l.getList()) {
+			if (item.getCategory().contains(search)) {
+				count ++;
+				SimpleDateFormat transFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				String now = transFormat.format(item.getCurrent_date());
+				System.out.println(count + ". [" + item.getCategory() + "] " + "제목: " + item.getTitle() + " - " + "내용 : " + item.getDesc() + " - " + "마감날짜 : " + item.getDue_date() + " - " + "생성날짜 : " + now);
+			}
+		}
+		System.out.println("총 " + count + " 개의 결과가 존재합니다.");
 	}
 }

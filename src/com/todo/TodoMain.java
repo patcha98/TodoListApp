@@ -47,37 +47,41 @@ public class TodoMain {
 				break;
 
 			case "ls_name_asc":
-				l.sortByName();
 				System.out.println("제목순으로 정렬하였습니다.");
-				isList = true;
+				TodoUtil.listAll(l, "title", 1);
 				break;
 
 			case "ls_name_desc":
-				l.sortByName();
-				l.reverseList();
 				System.out.println("제목역순으로 정렬하였습니다.");
-				isList = true;
+				TodoUtil.listAll(l, "title", 0);
 				break;
 				
 			case "ls_date":
-				l.sortByDate();
 				System.out.println("날짜순으로 정렬하였습니다.");
-				isList = true;
+				TodoUtil.listAll(l, "due_date", 1);
 				break;
 				
 			case "ls_date_desc":
-				l.sortByDate();
-				l.reverseList();
 				System.out.println("날짜역순으로 정렬하였습니다.");
-				isList = true;
+				TodoUtil.listAll(l, "due_date", 0);
 				break;
 			
 			case "search":
-				TodoUtil.search(l);
+				System.out.print("검색할 키워드를 입력해주세요 : ");
+				Scanner sc1 = new Scanner(System.in);
+				String keyword = sc1.nextLine();
+				TodoUtil.search(l,keyword);
 				break;
-				
+			
+			case "ls_cate":
+				TodoUtil.listCateAll(l);
+				break;
+			
 			case "search_category":
-				TodoUtil.search_category(l);
+				System.out.print("검색할 키워드를 입력해주세요 : ");
+				Scanner sc2 = new Scanner(System.in);
+				String cate = sc2.nextLine();
+				TodoUtil.search_category(l, cate);
 				break;
 				
 			case "help":

@@ -17,6 +17,8 @@ public class Menu {
         System.out.println("load <- 저장된 .txt 파일의 내용을 불러옵니다");
         System.out.println("search <- 키워드와 일치하는 제목 또는 내용을 가진 목록을 표시합니다.");
         System.out.println("search_category <- 키워드와 일치하는 카테고리를 가진 목록을 표시합니다.");
+        System.out.println("multi_del <- 여러개의 아이템을 한 번에 지워버립니다.");
+        System.out.println("multi_add <- 매주 반복되는 아이템을 한 번에 추가합니다.");
         System.out.println("exit <- 프로그램 종료");
     }
     public static void prompt()

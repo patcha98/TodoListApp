@@ -83,6 +83,22 @@ public class TodoMain {
 				String cate = sc2.nextLine();
 				TodoUtil.search_category(l, cate);
 				break;
+			
+			case "multi_del":
+				System.out.print("삭제할 아이템의 번호를 입력해주세요 (ex:1,4,6,7) : ");
+				Scanner sc3 = new Scanner(System.in);
+				String Mdel = sc3.nextLine();
+				String[] Ddel = Mdel.split(",");
+				TodoUtil.multiDeleteItem(l, Ddel);
+
+				break;
+			
+			case "multi_add":
+	
+				TodoUtil.multiAddItem(l);
+
+				break;
+				
 				
 			case "help":
 				Menu.displaymenu();

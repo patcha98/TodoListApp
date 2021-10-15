@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -23,7 +24,7 @@ public class TodoList {
 	}
 
 	public int addItem(TodoItem t) {
-		String sql = "insert into TodoList (title, desc, category, current_date, due_date)" + "values (?, ?, ?, ?, ?);";
+		String sql = "insert into TodoList (title, desc, category, current_date, due_date, checking, manda, item_name)" + "values (?, ?, ?, ?, ?, ?, ?, ?);";
 		PreparedStatement pstmt;
 		int count = 0;
 		try{
@@ -31,11 +32,18 @@ public class TodoList {
 			pstmt.setString(1,t.getTitle());
 			pstmt.setString(2,t.getDesc());
 			pstmt.setString(3,t.getCategory());
-			Date current_date2 = new Date();
-			SimpleDateFormat transFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-			String now = transFormat.format(current_date2);
-			pstmt.setString(4,now);
+			if(t.getCurrent_date() == null) {
+				Date current_date2 = new Date();
+				SimpleDateFormat transFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+				String now = transFormat.format(current_date2);
+				pstmt.setString(4,now);
+			}
+			else
+				pstmt.setString(4,t.getCurrent_date());
 			pstmt.setString(5,t.getDue_date());
+			pstmt.setInt(6,t.getCheck());
+			pstmt.setInt(7,t.getManda());
+			pstmt.setString(8,t.getName());
 			count = pstmt.executeUpdate();
 			pstmt.close();
 		}catch(SQLException e) {
@@ -59,8 +67,8 @@ public class TodoList {
 		return count;
 	}
 
-	int editItem(TodoItem t, TodoItem updated) {
-		String sql = "update TodoList set title = ?, desc = ?, category = ?, current_date = ?, due_date = ?" + " where id = ?;";
+	int editItem(TodoItem t) {
+		String sql = "update TodoList set title = ?, desc = ?, category = ?, current_date = ?, due_date = ?, checking = ?, manda = ?, item_name = ?" + " where id = ?;";
 		PreparedStatement pstmt;
 		int count = 0;
 		try{
@@ -70,6 +78,10 @@ public class TodoList {
 			pstmt.setString(3,t.getCategory());
 			pstmt.setString(4,t.getCurrent_date());
 			pstmt.setString(5,t.getDue_date());
+			pstmt.setInt(6,t.getCheck());
+			pstmt.setInt(7,t.getManda());
+			pstmt.setString(8,t.getName());
+			pstmt.setInt(9,t.getId());
 			count = pstmt.executeUpdate();
 			pstmt.close();
 		}catch(SQLException e) {
@@ -83,7 +95,7 @@ public class TodoList {
 		Statement stmt;
 		try {
 			stmt = conn.createStatement();
-			String sql = "SELECT * FROM todolist";
+			String sql = "SELECT * FROM TodoList";
 			ResultSet rs = stmt.executeQuery(sql);
 			while(rs.next()){
 				int id = rs.getInt("id");
@@ -92,7 +104,10 @@ public class TodoList {
 				String desc = rs.getString("desc");
 				String due_date = rs.getString("due_date");
 				String current_date = rs.getString("current_date");
-				TodoItem t = new TodoItem(title, desc, category, due_date);
+				int check = rs.getInt("checking");
+				int manda = rs.getInt("manda");
+				String name = rs.getString("item_name");
+				TodoItem t = new TodoItem(title, desc, category, due_date, check, manda, name);
 				t.setId(id);
 				t.setCurrent_date(current_date);
 				list.add(t);
@@ -129,9 +144,18 @@ public class TodoList {
 	}
 
 	public void listAll() {
+
 		for (TodoItem myitem : list) {
 			SimpleDateFormat transFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 			String now = transFormat.format(myitem.getCurrent_date());
+			if(myitem.getCheck() == 0) {
+				System.out.print("[X]");
+			}
+			else {
+				System.out.print("[O]");
+			}
+			
+			
 			System.out.println("[" + myitem.getCategory() + "] " + "제목: " + myitem.getTitle() + " - " + "내용 : " + myitem.getDesc() + " - " + "마감날짜 : " + myitem.getDue_date() + " - " + "생성날짜 : " + now);
 		}
 	}
@@ -151,8 +175,13 @@ public class TodoList {
 	
 
 	public Boolean isDuplicate(String title) {
+		
 		for (TodoItem item : list) {
-			if (title.equals(item.getTitle())) return true;
+			if (title.equals(item.getTitle())) {
+				return true;
+				
+			}
+				
 		}
 		return false;
 	}
@@ -222,7 +251,10 @@ public class TodoList {
 				String desc = rs.getString("desc");
 				String due_date = rs.getString("due_date");
 				String current_date = rs.getString("current_date");
-				TodoItem t = new TodoItem(title, desc, category, due_date);
+				int check = rs.getInt("checking");
+				int manda = rs.getInt("manda");
+				String name = rs.getString("item_name");
+				TodoItem t = new TodoItem(title, desc, category, due_date, check, manda, name);
 				t.setId(id);
 				t.setCurrent_date(current_date);
 				l.add(t);
@@ -238,6 +270,67 @@ public class TodoList {
 
 		return l;
 	}
+
+	public int Multi_deleteItem(String[] ddel) {
+		// TODO Auto-generated method stub
+		String sql = "delete from TodoList where id = ?;";
+		PreparedStatement pstmt;
+		int count = 0;
+		for (String i : ddel) {
+			try {
+				int index = Integer.parseInt(i);
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setInt(1, index);
+				count = pstmt.executeUpdate();
+				pstmt.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}	
+		return count;
+	}
 	
+	public int Multi_addItem(TodoItem t, int day, int weeks) {
+		
+		Calendar cal = Calendar.getInstance();
+        cal.setTime(new Date());
+        DateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+        cal.add(Calendar.DATE, + day);
+        
+        int count = 0;
+        
+		for(; weeks == 0; weeks--) {
+			String sql = "insert into TodoList (title, desc, category, current_date, due_date, checking, manda, item_name)" + "values (?, ?, ?, ?, ?, ?, ?, ?);";
+			PreparedStatement pstmt;
+			try{
+				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1,t.getTitle());
+				pstmt.setString(2,t.getDesc());
+				pstmt.setString(3,t.getCategory());
+				if(t.getCurrent_date() == null) {
+					Date current_date2 = new Date();
+					SimpleDateFormat transFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+					String now = transFormat.format(current_date2);
+					pstmt.setString(4,now);
+				}
+				else
+					pstmt.setString(4,t.getCurrent_date());
+				String dw = df.format(cal.getTime());
+				pstmt.setString(5,dw);
+		        cal.add(Calendar.DATE, +7);
+				pstmt.setInt(6,t.getCheck());
+				pstmt.setInt(7,t.getManda());
+				pstmt.setString(8,t.getName());
+				count = pstmt.executeUpdate();
+				pstmt.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+			
+		}
+		
+		return count;
+		
+	}
 
 }
